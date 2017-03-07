@@ -1,0 +1,2 @@
+include versioneer.py
+include controls_doctor/_version.py

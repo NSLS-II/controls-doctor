@@ -7,7 +7,12 @@ import re
 def gpfs_mount():
     "Checking that GPFS is mounted at /GPFS."
     success = os.path.isdir('/GPFS/')
-    return success, ''
+    msg = """
+    The GPFS could be found at /GPFS. If you have any detectors that write to
+    the GPFS, you will not be able to access their data from here. Contact the
+    IT group if you need access.
+"""
+    return success, msg
 
 
 def proxy_env():
@@ -16,58 +21,58 @@ def proxy_env():
     https = os.environ.get('https_proxy') == 'http://proxy:8888'
     no = os.environ.get('no_proxy') == 'cs.nsls2.local'
     success = http and https and no
-    if not success:
-        msg = """
+    msg = """
     Set environmental variables:
 
         export http_proxy=http://proxy:8888
         export https_proxy=http://proxy:8888
         export no_proxy=cs.nsls2.local
 """
-    else:
-        msg = ''
     return success, msg
 
 
 def condarc():
     "Checking that ~/.condarc does not exist."
     success = not os.path.isfile(os.path.expanduser('~/.condarc'))
-    if not success:
-        msg = """
-Your user-space conda config file may be interfering with system-level
-configuration. Delete it like this:
+    msg = """
+    Your user-space conda config file may be interfering with system-level
+    configuration. Delete it like this:
 
-rm ~/.condarc
+        rm ~/.condarc
 """
-    else:
-        msg = ''
     return success, msg
 
 
 def binstar_config():
     "Checking that ~/.binstar does not exit."
     success = not os.path.isdir(os.path.expanduser('~/.binstar'))
-    if not success:
-        msg = """
-Your user-space binstar config file may be interfering with system-level
-configuration. Delete it like this:
+    msg = """
+    Your user-space binstar config file may be interfering with system-level
+    configuration. Delete it like this:
 
-rm -rf ~/binstar
+        rm -rf ~/binstar
+
+    (Be especially careful using the `rm -rf` command. Typing the wrong thing
+    can be destructive!)
 """
-    else:
-        msg = ''
     return success, msg
 
 
 def nfs_perf():
     "Timing NFS performance by writing a 1 MB test file."
-    THRESH = 1000000
+    THRESH = 100000000
+    output_path = os.path.expanduser('~/.check-doctor-dd-testfile')
     o = subprocess.check_output(
-            ['dd', 'if=/dev/random', 'of=.check-doctor-dd-testfile',
+            ['dd', 'if=/dev/random', 'of={}'.format(output_path),
              'bs=1048576', 'count=1'], stderr=subprocess.STDOUT).decode()
     p = re.compile('.*\((\d+) bytes/sec\)')
     rate = int(p.match(o.split('\n')[-2]).groups(1)[0])
-    return rate > THRESH, '{} bytes/sec'.format(rate)
+    msg = """
+    The filesystem seems to be slow. A quick test writing 1 MB ran at
+    {} bytes/sec. As a result, programs may be unresponsive. Contact the IT
+    group.
+""".format(rate)
+    return rate > THRESH, msg
 
 
 def conda_env():
@@ -107,7 +112,6 @@ def main():
     parser.add_argument('--conda-env', action='store_true')
     parser.add_argument('--all', action='store_true')
     ns = parser.parse_args()
-    print(ns)
     for func in CHECKS:
         if getattr(ns, func.__name__) or ns.all:
             run_check(func)

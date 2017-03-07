@@ -60,7 +60,7 @@ def binstar_config():
 
 def nfs_perf():
     "Timing NFS performance by writing a 1 MB test file."
-    THRESH = 100000000
+    THRESH = 1000000
     output_path = os.path.expanduser('~/.check-doctor-dd-testfile')
     o = subprocess.check_output(
             ['dd', 'if=/dev/random', 'of={}'.format(output_path),

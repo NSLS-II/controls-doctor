@@ -64,15 +64,15 @@ def nfs_perf():
     THRESH = 1000000
     o = subprocess.check_output(
             ['dd', 'if=/dev/random', 'of=.check-doctor-dd-testfile',
-             'bs=1048576', 'count=1'], stderr=subprocess.STDOUT)
+             'bs=1048576', 'count=1'], stderr=subprocess.STDOUT).decode()
     p = re.compile('.*\((\d+) bytes/sec\)')
-    rate = p.match(o.split('\n')[-2]).groups(1)[0]
+    rate = int(p.match(o.split('\n')[-2]).groups(1)[0])
     return rate > THRESH, '{} bytes/sec'.format(rate)
 
 
 def conda_env():
     "Checking that conda env is activated and contains Python."
-    o = subprocess.check_output(['which', 'python'])
+    o = subprocess.check_output(['which', 'python']).decode()
     is_system_conda_env = o.startswith('/opt/conda_env')
     is_user_conda_env = o.startswith(os.path.expanduser('~/conda_envs'))
     success = is_system_conda_env or is_user_conda_env
@@ -97,7 +97,7 @@ def run_check(func):
         print(u'\033[91m\x1b[1A\u2717\033[0m'.encode('utf8'))
         print(msg)
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpfs-mount', action='store_true')
     parser.add_argument('--proxy-env', action='store_true')

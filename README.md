@@ -2,6 +2,8 @@
 
 A command-line utility that checks for common problems related to IT or DAMA.
 
+To get help. use ``controls-doctor --help`` or ``controls-doctor -h``.
+
 Example:
 
 ```

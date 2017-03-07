@@ -104,13 +104,11 @@ def run_check(func):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--gpfs-mount', action='store_true')
-    parser.add_argument('--proxy-env', action='store_true')
-    parser.add_argument('--condarc', action='store_true')
-    parser.add_argument('--binstar-config', action='store_true')
-    parser.add_argument('--nfs-perf', action='store_true')
-    parser.add_argument('--conda-env', action='store_true')
-    parser.add_argument('--all', action='store_true')
+    for func in CHECKS:
+        name_as_flag = '--{}'.format(func.__name__.replace('_', '-').lower())
+        parser.add_argument(name_as_flag, action='store_true',
+                            help=func.__doc__)
+    parser.add_argument('--all', action='store_true', help='All of the above.')
     ns = parser.parse_args()
     for func in CHECKS:
         if getattr(ns, func.__name__) or ns.all:

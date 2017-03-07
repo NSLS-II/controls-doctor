@@ -31,7 +31,7 @@ def proxy_env():
 
 def condarc():
     "Checking that ~/.condarc does not exist."
-    success = os.path.isfile(os.path.expanduser('~/.condarc'))
+    success = not os.path.isfile(os.path.expanduser('~/.condarc'))
     if not success:
         msg = """
 Your user-space conda config file may be interfering with system-level
@@ -71,7 +71,7 @@ def nfs_perf():
 
 
 def conda_env():
-    "Checking that conda env is activated and contains Python."
+    "Checking conda env from standard user or system location is activated."
     o = subprocess.check_output(['which', 'python']).decode()
     is_system_conda_env = o.startswith('/opt/conda_env')
     is_user_conda_env = o.startswith(os.path.expanduser('~/conda_envs'))
@@ -92,9 +92,9 @@ def run_check(func):
     print("  {}".format(func.__doc__))
     success, msg = func()
     if success:
-        print(u'\033[92m\x1b[1A\u2713\033[0m'.encode('utf8'))
+        print('\033[92m\x1b[1A\u2713\033[0m')
     else:
-        print(u'\033[91m\x1b[1A\u2717\033[0m'.encode('utf8'))
+        print('\033[91m\x1b[1A\u2717\033[0m')
         print(msg)
 
 def main():

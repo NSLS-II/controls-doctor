@@ -39,3 +39,11 @@ $ controls-doctor --all
 ✗ Checking conda env from standard user or system location is activated.
     Current Python is at /Users/dallan/miniconda/envs/bnl/bin/python
 ```
+
+## Installation
+
+```
+git clone https://github.com/NSLS-II/controls-doctor
+cd controls-doctor
+pip install .
+```

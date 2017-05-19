@@ -80,7 +80,8 @@ def nfs_perf():
 def conda_env():
     "Checking conda env from standard user or system location is activated."
     o = subprocess.check_output(['which', 'python']).decode()
-    is_system_conda_env = o.startswith('/opt/conda_env')
+    is_system_conda_env = (o.startswith('/opt/conda_env') or
+                           o.startswith('/opt/conda'))
     is_user_conda_env = o.startswith(os.path.expanduser('~/conda_envs'))
     success = is_system_conda_env or is_user_conda_env
     msg = '    Current Python is at {}'.format(o)

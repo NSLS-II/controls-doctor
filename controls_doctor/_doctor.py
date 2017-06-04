@@ -74,6 +74,8 @@ def nfs_perf():
     {} bytes/sec. As a result, programs may be unresponsive. Contact the IT
     group.
 """.format(rate)
+    # Cleanup after ourselves, just to be nice
+    os.remove(output_path)
     return rate > THRESH, msg
 
 

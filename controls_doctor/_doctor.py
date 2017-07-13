@@ -63,8 +63,8 @@ def nfs_perf():
     THRESH = 1000000
     output_path = os.path.expanduser('~/.check-doctor-dd-testfile')
     output = subprocess.check_output(
-            ['sync;', 'dd', 'if=/dev/random', 'of={}'.format(output_path),
-             'bs=1048576', 'count=1', '; sync'], stderr=subprocess.STDOUT).decode()
+            ['dd', 'if=/dev/random', 'of={}'.format(output_path),
+             'bs=1048576', 'count=1'], stderr=subprocess.STDOUT).decode()
     for line in output.split('\n'):
         if line.endswith('/s') or line.endswith('/sec'):
             rate = float(line.split()[-2])
